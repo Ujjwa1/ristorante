@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import logo from './logo.svg';
 import Menu from './components/Menucomponent';
 import './App.css';
 import { Navbar, NavbarBrand } from 'reactstrap';
@@ -20,7 +19,7 @@ class App extends Component {
     <div>
         <Navbar dark color="primary">
           <div className="container">
-            <NavbarBrand href="/">Ristorante confusion</NavbarBrand>
+            <NavbarBrand href="/">Ristorante Con Fusion</NavbarBrand>
           </div>
         </Navbar>
         <Menu dishes = {this.state.dishes} />
