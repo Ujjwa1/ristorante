@@ -15,48 +15,41 @@ function RenderDish({ dish }) {
           <Card>
             <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name} />
             <CardBody>
-              <CardTitle>{dish.name}</CardTitle>
+              <h4><CardTitle>{dish.name}</CardTitle></h4>
               <CardText>{dish.description}</CardText>
             </CardBody>
           </Card>
         </div>
       );
     } 
-    else {
-      return <div></div>;
-    }
   }
-function RenderComments({comments,addComment,dishId}) {
+    
+function RenderComments({comments,postComment,dishId}) {
 
     if (comments == null) {
         return (<div></div>)
     }
-    let comments_list = comments;     
-    const cmnts = comments_list.map(comment => {
-        return (
-            <li key={comment.id}>
-                <p>{comment.comment}</p>
-                <p>-- {comment.author},
-                &nbsp;
-                {new Intl.DateTimeFormat('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: '2-digit'
-                    }).format(new Date(comment.date))}
-                </p>
-            </li>
-        );
-    });
+    var commentList = comments.map(comment => {
+      return (
+          <li key={comment.id} >
+              {comment.comment}
+              <br /><br />
+              -- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}
+              <br /><br />
+          </li>
+      );
+  });
+  return (
+      <div>
+          <h4>Comments</h4>
+          <ul className="list-unstyled">
+              {commentList}
+          </ul>
+          <CommentForm dishId={dishId} postComment={postComment} />
+        </div>
+    );
+}
 
-        return (
-            <div>
-                <h4>Comments</h4>
-                <ul className="list-unstyled">
-                    {cmnts}
-                </ul>
-            </div>
-        );
-    }
 
 const DishDetail = (props) => {
 
@@ -78,49 +71,38 @@ else if (props.errMess) {
         </div>
     );
 } 
-else{
-    return (<div className="container">
-    <div className="row">
-        <Breadcrumb>
-            <BreadcrumbItem>
-                <Link to="/menu">Menu</Link>
-            </BreadcrumbItem>
-            <BreadcrumbItem active> {
-                props.dish.name
-            }</BreadcrumbItem>
-        </Breadcrumb>
-        <div className="col-12">
-            <h3> {
-                props.dish.name
-            }</h3>
-            <hr/>
-        </div>
-    </div>
-    <div className="row">
-        <div className="col-12 col-md-5 m-1">
-            <RenderDish dish={
-                props.dish
-            }/>
-        </div>
-        <div className="col-12 col-md-5 m-1">
-            <RenderComments comments={
-                props.comments
-            }/>
-            <CommentForm dishId={
-                    props.dish.id
-                }
-                addComment={
-                    props.addComment
-                }/>
-        </div>
-    </div>
-</div>);
-}   
+else if (props.dish) {
+  return (
+      <div className="container">
+          <div className="row">
+              <Breadcrumb>
+                  <BreadcrumbItem><Link to='/menu'>Menu</Link></BreadcrumbItem>
+                  <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
+              </Breadcrumb>
+              <div className="col-12">
+                  <h3>{props.dish.name}</h3>
+                  <hr />
+              </div>
+          </div>
+          <div className="row">
+              <div className="col-12 col-md-5 m-1">
+                  <RenderDish dish={props.dish} />
+              </div>
+              <div className="col-12 col-md-5 m-1">
+                  <RenderComments comments={props.comments} postComment={props.postComment} dishId={props.dish.id} />
+              </div>
+          </div>
+      </div>
+  );
+}
 
+else {
+  return (<div></div>);
+}
+}
 
-
-};
-    
+export default DishDetail;   
+        
         const maxLength = len => val => !val || val.length <= len;
         const minLength = len => val => val && val.length >= len;
 
@@ -142,7 +124,7 @@ else{
 
               handleSubmit(values) {
                 this.toggleModal();
-                this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
+                this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
               }
 
               render() {
@@ -228,4 +210,3 @@ else{
 }
 }
 
-export default DishDetail;
